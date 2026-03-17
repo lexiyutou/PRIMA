@@ -255,6 +255,144 @@ const buildPoseLayout = (camera) => ({
   hovermode: 'closest',
 });
 
+const meshAxisTemplate = {
+  ...axisTemplate,
+  showgrid: false,
+  showbackground: false,
+  visible: false,
+};
+
+const buildMeshTrace = (mesh) => ({
+  type: 'mesh3d',
+  x: mesh.vertices.map((vertex) => vertex[0]),
+  y: mesh.vertices.map((vertex) => vertex[1]),
+  z: mesh.vertices.map((vertex) => vertex[2]),
+  i: mesh.faces.map((face) => face[0]),
+  j: mesh.faces.map((face) => face[1]),
+  k: mesh.faces.map((face) => face[2]),
+  color: mesh.color,
+  opacity: 1,
+  flatshading: false,
+  hoverinfo: 'skip',
+  showscale: false,
+  lighting: {
+    ambient: 0.55,
+    diffuse: 0.85,
+    specular: 0.25,
+    roughness: 0.75,
+    fresnel: 0.1,
+  },
+  lightposition: { x: 100, y: 120, z: 180 },
+});
+
+const buildMeshLayout = (camera) => ({
+  margin: { l: 0, r: 0, t: 0, b: 0 },
+  scene: {
+    xaxis: meshAxisTemplate,
+    yaxis: meshAxisTemplate,
+    zaxis: meshAxisTemplate,
+    bgcolor: '#ffffff',
+    aspectmode: 'data',
+    dragmode: 'orbit',
+    camera: camera || { eye: { x: 1.5, y: 1.15, z: 0.85 } },
+  },
+  paper_bgcolor: 'white',
+  plot_bgcolor: 'white',
+  showlegend: false,
+});
+
+const rgbToCssColor = (channels) => {
+  if (!channels || channels.length < 3) {
+    return '#a6bddb';
+  }
+
+  const [r, g, b] = channels.map((value) => {
+    const normalized = value <= 1 ? value * 255 : value;
+    return Math.max(0, Math.min(255, Math.round(normalized)));
+  });
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
+const normalizeMeshVertices = (vertices) => {
+  if (!vertices.length) {
+    return vertices;
+  }
+
+  const mins = [Infinity, Infinity, Infinity];
+  const maxs = [-Infinity, -Infinity, -Infinity];
+
+  vertices.forEach((vertex) => {
+    vertex.forEach((value, axisIdx) => {
+      mins[axisIdx] = Math.min(mins[axisIdx], value);
+      maxs[axisIdx] = Math.max(maxs[axisIdx], value);
+    });
+  });
+
+  const center = mins.map((minValue, axisIdx) => (minValue + maxs[axisIdx]) / 2);
+  const scale = Math.max(...maxs.map((maxValue, axisIdx) => maxValue - mins[axisIdx]), 1);
+
+  return vertices.map((vertex) => (
+    vertex.map((value, axisIdx) => (value - center[axisIdx]) / scale)
+  ));
+};
+
+const parseObjMesh = (text) => {
+  const vertices = [];
+  const faces = [];
+  let meshColor = null;
+
+  text.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) {
+      return;
+    }
+
+    if (trimmed.startsWith('v ')) {
+      const parts = trimmed.split(/\s+/).slice(1).map(Number);
+      vertices.push(parts.slice(0, 3));
+      if (!meshColor && parts.length >= 6) {
+        meshColor = rgbToCssColor(parts.slice(3, 6));
+      }
+      return;
+    }
+
+    if (!trimmed.startsWith('f ')) {
+      return;
+    }
+
+    const indices = trimmed
+      .split(/\s+/)
+      .slice(1)
+      .map((token) => {
+        const vertexIndex = Number.parseInt(token.split('/')[0], 10);
+        if (!Number.isFinite(vertexIndex)) {
+          return null;
+        }
+        return vertexIndex > 0 ? vertexIndex - 1 : vertices.length + vertexIndex;
+      })
+      .filter((vertexIndex) => Number.isInteger(vertexIndex));
+
+    if (indices.length < 3) {
+      return;
+    }
+
+    for (let idx = 1; idx < indices.length - 1; idx += 1) {
+      faces.push([indices[0], indices[idx], indices[idx + 1]]);
+    }
+  });
+
+  if (!vertices.length || !faces.length) {
+    throw new Error('OBJ file does not contain a renderable mesh');
+  }
+
+  return {
+    vertices: normalizeMeshVertices(vertices),
+    faces,
+    color: meshColor || '#a6bddb',
+  };
+};
+
 const parseHeaderStr = (str) => {
   const start = str.indexOf('{');
   const end = str.lastIndexOf('}');
@@ -389,37 +527,33 @@ const loadPoseFromNpz = async (url) => {
   return reshapePose(parsed.data, parsed.shape);
 };
 
+const loadMeshFromObj = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch mesh file: ${response.status}`);
+  }
+
+  const text = await response.text();
+  return parseObjMesh(text);
+};
+
 const SAMPLES = [
   {
-    id: 'human-running',
-    title: 'Human',
-    poseTitle: '3D Pose',
-    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/humans/running/pose2D/0000_2D.png`,
-    posePath: `${process.env.PUBLIC_URL}/static/3d_predictions/humans/running/pose3D/0000_3D.npz`,
-    connections: HUMAN_CONNECTIONS,
-  },
-  {
-    id: 'human-golf',
-    title: 'Human',
-    poseTitle: '3D Pose',
-    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/humans/Golf_3dpw/pose2D/0000_2D.png`,
-    posePath: `${process.env.PUBLIC_URL}/static/3d_predictions/humans/Golf_3dpw/pose3D/0000_3D.npz`,
-    connections: HUMAN_CONNECTIONS,
-  },
-  {
-    id: 'animal-dog',
-    title: 'Animal',
-    poseTitle: '3D Pose',
-    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/dog/pose2D_on_image/0000_2d.png`,
-    posePath: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/dog/pose3D/0000_3D.npz`,
-    connections: ANIMAL_CONNECTIONS,
+    id: 'animal-horse-tta',
+    title: 'Horse',
+    viewerTitle: '3D Mesh',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/000000119761_horse/pose2D_on_image/0000_2d.png`,
+    assetPath: `${process.env.PUBLIC_URL}/static/3d_predictions/000000199236_horse_after_tta.obj`,
+    viewerType: 'mesh',
+    camera: { eye: { x: 1.65, y: 1.1, z: 0.8 } },
   },
   {
     id: 'animal-cow',
-    title: 'Animal',
-    poseTitle: '3D Pose',
+    title: 'Cow',
+    viewerTitle: '3D Pose',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/000000129100_cow/pose2D_on_image/0000_2d.png`,
-    posePath: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/000000129100_cow/pose3D/0000_3D.npz`,
+    assetPath: `${process.env.PUBLIC_URL}/static/3d_predictions/animals/000000129100_cow/pose3D/0000_3D.npz`,
+    viewerType: 'pose',
     connections: ANIMAL_CONNECTIONS,
   },
 ];
@@ -445,6 +579,27 @@ function PoseViewerCard({ title, poses, camera, connections }) {
   );
 }
 
+function MeshViewerCard({ title, mesh, camera }) {
+  const trace = useMemo(() => buildMeshTrace(mesh), [mesh]);
+  const layout = useMemo(() => buildMeshLayout(camera), [camera]);
+
+  return (
+    <div className="pose-card">
+      <h3 className="title is-5 pose-card-title">{title}</h3>
+      <div className="pose-plot-wrapper">
+        <Plot
+          data={[trace]}
+          layout={layout}
+          config={plotConfig}
+          className="pose-plot"
+          style={{ width: '100%', height: '100%' }}
+          useResizeHandler
+        />
+      </div>
+    </div>
+  );
+}
+
 function ImageCard({ title, imageSrc }) {
   return (
     <div className="pose-card">
@@ -457,22 +612,24 @@ function ImageCard({ title, imageSrc }) {
 }
 
 function App() {
-  const [poseMap, setPoseMap] = useState({});
-  const [poseLoading, setPoseLoading] = useState(true);
-  const [poseError, setPoseError] = useState('');
+  const [viewerDataMap, setViewerDataMap] = useState({});
+  const [viewerLoading, setViewerLoading] = useState(true);
+  const [viewerError, setViewerError] = useState('');
 
   useEffect(() => {
     let isMounted = true;
 
     const loadAll = async () => {
-      setPoseLoading(true);
-      setPoseError('');
+      setViewerLoading(true);
+      setViewerError('');
 
       try {
         const results = await Promise.allSettled(
           SAMPLES.map(async (sample) => {
-            const pose = await loadPoseFromNpz(sample.posePath);
-            return { id: sample.id, pose };
+            const viewerData = sample.viewerType === 'mesh'
+              ? await loadMeshFromObj(sample.assetPath)
+              : await loadPoseFromNpz(sample.assetPath);
+            return { id: sample.id, viewerData };
           })
         );
 
@@ -481,7 +638,7 @@ function App() {
 
         results.forEach((result, idx) => {
           if (result.status === 'fulfilled') {
-            nextMap[result.value.id] = result.value.pose;
+            nextMap[result.value.id] = result.value.viewerData;
             return;
           }
 
@@ -492,17 +649,17 @@ function App() {
           return;
         }
 
-        setPoseMap(nextMap);
+        setViewerDataMap(nextMap);
         if (errors.length) {
-          setPoseError(errors.join('; '));
+          setViewerError(errors.join('; '));
         }
       } catch (err) {
         if (isMounted) {
-          setPoseError(err?.message || 'Failed to load pose files');
+          setViewerError(err?.message || 'Failed to load interactive assets');
         }
       } finally {
         if (isMounted) {
-          setPoseLoading(false);
+          setViewerLoading(false);
         }
       }
     };
@@ -527,10 +684,11 @@ function App() {
       modules.push({
         type: 'pose',
         id: `${sample.id}-pose`,
-        title: sample.poseTitle,
+        title: sample.viewerTitle,
         sampleId: sample.id,
-        camera: undefined,
+        camera: sample.camera,
         connections: sample.connections,
+        viewerType: sample.viewerType,
       });
     });
 
@@ -549,14 +707,15 @@ function App() {
             <div className="column is-full-width">
               <h2 className="title is-3">Demo</h2>
               <p className="pose-viewer-intro">
-                Placeholder demo assets from FMPose3D are kept here so you can replace them later with PRIMA
-                meshes, reprojections, or adaptation examples.
+                The first animal example now renders your provided horse OBJ directly in the browser. The
+                remaining example is still a placeholder skeleton demo that you can replace later with more
+                PRIMA-specific assets.
               </p>
-              {poseLoading && (
-                <p className="pose-status pose-loading">Loading 3D pose previews...</p>
+              {viewerLoading && (
+                <p className="pose-status pose-loading">Loading interactive previews...</p>
               )}
-              {poseError && (
-                <p className="pose-status pose-error">Some pose files could not be loaded: {poseError}</p>
+              {viewerError && (
+                <p className="pose-status pose-error">Some preview files could not be loaded: {viewerError}</p>
               )}
               <div className="pose-viewers-grid four-wide">
                 {demoModules.map((module) => {
@@ -570,13 +729,24 @@ function App() {
                     );
                   }
 
-                  const pose = poseMap[module.sampleId];
-                  if (!pose) {
+                  const viewerData = viewerDataMap[module.sampleId];
+                  if (!viewerData) {
                     return (
                       <div key={module.id} className="pose-card">
                         <h3 className="title is-5 pose-card-title">{module.title}</h3>
-                        <p className="pose-status pose-loading">Loading pose...</p>
+                        <p className="pose-status pose-loading">Loading viewer...</p>
                       </div>
+                    );
+                  }
+
+                  if (module.viewerType === 'mesh') {
+                    return (
+                      <MeshViewerCard
+                        key={module.id}
+                        title={module.title}
+                        mesh={viewerData}
+                        camera={module.camera}
+                      />
                     );
                   }
 
@@ -584,7 +754,7 @@ function App() {
                     <PoseViewerCard
                       key={module.id}
                       title={module.title}
-                      poses={[pose]}
+                      poses={[viewerData]}
                       camera={module.camera}
                       connections={module.connections}
                     />
