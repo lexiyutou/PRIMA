@@ -2,7 +2,7 @@
   "name": "prima",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://lexiyutou.github.io/PRIMA",
   "dependencies": {
     "jszip": "^3.10.1",
     "katex": "^0.16.27",
