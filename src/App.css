@@ -474,6 +474,26 @@ img[src*="overview.png"] {
   height: 100% !important;
 }
 
+.mesh-angle-control {
+  margin-top: 12px;
+}
+
+.mesh-angle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mesh-angle-slider {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
 .pose-status {
   margin: 6px 0 0;
   text-align: left;
