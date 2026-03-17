@@ -177,7 +177,13 @@ const plotConfig = {
   responsive: true,
   displaylogo: false,
   scrollZoom: true,
-  modeBarButtonsToRemove: ['toImage', 'lasso3d', 'select3d'],
+  modeBarButtonsToRemove: ['toImage', 'lasso3d', 'select3d', 'orbitRotation', 'tableRotation'],
+};
+
+const DEFAULT_MESH_CAMERA = {
+  eye: { x: 1.5, y: 1.15, z: 0.85 },
+  up: { x: 0, y: 0, z: 1 },
+  center: { x: 0, y: 0, z: 0 },
 };
 
 const axisTemplate = {
@@ -293,13 +299,104 @@ const buildMeshLayout = (camera) => ({
     zaxis: meshAxisTemplate,
     bgcolor: '#ffffff',
     aspectmode: 'data',
-    dragmode: 'orbit',
-    camera: camera || { eye: { x: 1.5, y: 1.15, z: 0.85 } },
+    dragmode: 'turntable',
+    camera: camera || DEFAULT_MESH_CAMERA,
   },
   paper_bgcolor: 'white',
   plot_bgcolor: 'white',
   showlegend: false,
 });
+
+const lockCameraToZAxis = (candidateCamera, referenceCamera = DEFAULT_MESH_CAMERA) => {
+  const baseEye = referenceCamera.eye || DEFAULT_MESH_CAMERA.eye;
+  const eye = {
+    ...baseEye,
+    ...(candidateCamera?.eye || {}),
+  };
+  const center = {
+    ...(referenceCamera.center || DEFAULT_MESH_CAMERA.center),
+    ...(candidateCamera?.center || {}),
+  };
+
+  const baseXyRadius = Math.hypot(baseEye.x, baseEye.y) || 1;
+  const baseDistance = Math.hypot(baseEye.x, baseEye.y, baseEye.z) || 1;
+  const candidateDistance = Math.hypot(eye.x, eye.y, eye.z) || baseDistance;
+  const scale = candidateDistance / baseDistance;
+  const lockedXyRadius = baseXyRadius * scale;
+  const azimuth = Math.atan2(eye.y, eye.x || 0);
+
+  return {
+    eye: {
+      x: lockedXyRadius * Math.cos(azimuth),
+      y: lockedXyRadius * Math.sin(azimuth),
+      z: baseEye.z * scale,
+    },
+    up: { x: 0, y: 0, z: 1 },
+    center,
+  };
+};
+
+const extractCameraFromRelayout = (eventData) => {
+  if (!eventData) {
+    return null;
+  }
+
+  if (eventData['scene.camera']) {
+    return eventData['scene.camera'];
+  }
+
+  const eyeX = eventData['scene.camera.eye.x'];
+  const eyeY = eventData['scene.camera.eye.y'];
+  const eyeZ = eventData['scene.camera.eye.z'];
+
+  if (eyeX === undefined && eyeY === undefined && eyeZ === undefined) {
+    return null;
+  }
+
+  return {
+    eye: {
+      x: eyeX,
+      y: eyeY,
+      z: eyeZ,
+    },
+    center: {
+      x: eventData['scene.camera.center.x'],
+      y: eventData['scene.camera.center.y'],
+      z: eventData['scene.camera.center.z'],
+    },
+    up: {
+      x: eventData['scene.camera.up.x'],
+      y: eventData['scene.camera.up.y'],
+      z: eventData['scene.camera.up.z'],
+    },
+  };
+};
+
+const getCameraAzimuthDegrees = (camera) => {
+  const eye = camera?.eye || DEFAULT_MESH_CAMERA.eye;
+  const azimuth = Math.atan2(eye.y, eye.x) * (180 / Math.PI);
+  return (azimuth + 360) % 360;
+};
+
+const buildCameraFromAzimuth = (azimuthDegrees, referenceCamera, currentCamera = referenceCamera) => {
+  const baseEye = referenceCamera.eye || DEFAULT_MESH_CAMERA.eye;
+  const baseDistance = Math.hypot(baseEye.x, baseEye.y, baseEye.z) || 1;
+  const currentEye = currentCamera?.eye || baseEye;
+  const currentDistance = Math.hypot(currentEye.x, currentEye.y, currentEye.z) || baseDistance;
+  const scale = currentDistance / baseDistance;
+  const xyRadius = (Math.hypot(baseEye.x, baseEye.y) || 1) * scale;
+  const angle = azimuthDegrees * (Math.PI / 180);
+
+  return {
+    eye: {
+      x: xyRadius * Math.cos(angle),
+      y: xyRadius * Math.sin(angle),
+      z: baseEye.z * scale,
+    },
+    up: { x: 0, y: 0, z: 1 },
+    center: referenceCamera.center || DEFAULT_MESH_CAMERA.center,
+  };
+};
 
 const rgbToCssColor = (channels) => {
   if (!channels || channels.length < 3) {
@@ -313,6 +410,11 @@ const rgbToCssColor = (channels) => {
 
   return `rgb(${r}, ${g}, ${b})`;
 };
+
+const rotateMeshToZUp = (vertices) => (
+  // The OBJ appears to use y as the gravity axis. Rotate it once so Plotly's z axis is up.
+  vertices.map(([x, y, z]) => [x, -z, y])
+);
 
 const normalizeMeshVertices = (vertices) => {
   if (!vertices.length) {
@@ -387,7 +489,7 @@ const parseObjMesh = (text) => {
   }
 
   return {
-    vertices: normalizeMeshVertices(vertices),
+    vertices: normalizeMeshVertices(rotateMeshToZUp(vertices)),
     faces,
     color: meshColor || '#a6bddb',
   };
@@ -581,7 +683,39 @@ function PoseViewerCard({ title, poses, camera, connections }) {
 
 function MeshViewerCard({ title, mesh, camera }) {
   const trace = useMemo(() => buildMeshTrace(mesh), [mesh]);
-  const layout = useMemo(() => buildMeshLayout(camera), [camera]);
+  const referenceCamera = useMemo(
+    () => lockCameraToZAxis(camera || DEFAULT_MESH_CAMERA),
+    [camera]
+  );
+  const initialAngle = useMemo(
+    () => getCameraAzimuthDegrees(referenceCamera),
+    [referenceCamera]
+  );
+  const [lockedCamera, setLockedCamera] = useState(referenceCamera);
+  const [rotationAngle, setRotationAngle] = useState(initialAngle);
+  const layout = useMemo(() => buildMeshLayout(lockedCamera), [lockedCamera]);
+
+  useEffect(() => {
+    setLockedCamera(referenceCamera);
+    setRotationAngle(initialAngle);
+  }, [initialAngle, referenceCamera]);
+
+  const handleRelayout = (eventData) => {
+    const nextCamera = extractCameraFromRelayout(eventData);
+    if (!nextCamera) {
+      return;
+    }
+
+    const nextLockedCamera = lockCameraToZAxis(nextCamera, referenceCamera);
+    setLockedCamera(nextLockedCamera);
+    setRotationAngle(getCameraAzimuthDegrees(nextLockedCamera));
+  };
+
+  const handleAngleChange = (event) => {
+    const nextAngle = Number(event.target.value);
+    setRotationAngle(nextAngle);
+    setLockedCamera(buildCameraFromAzimuth(nextAngle, referenceCamera, lockedCamera));
+  };
 
   return (
     <div className="pose-card">
@@ -594,6 +728,23 @@ function MeshViewerCard({ title, mesh, camera }) {
           className="pose-plot"
           style={{ width: '100%', height: '100%' }}
           useResizeHandler
+          onRelayout={handleRelayout}
+        />
+      </div>
+      <div className="mesh-angle-control">
+        <div className="mesh-angle-header">
+          <span>Rotation Around Z</span>
+          <span>{Math.round(rotationAngle)}deg</span>
+        </div>
+        <input
+          type="range"
+          min="0"
+          max="360"
+          step="1"
+          value={rotationAngle}
+          onChange={handleAngleChange}
+          className="mesh-angle-slider"
+          aria-label="Rotate mesh around z axis"
         />
       </div>
     </div>
