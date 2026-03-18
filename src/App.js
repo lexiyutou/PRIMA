@@ -623,7 +623,7 @@ function App() {
               <div className="results-container">
                 <div className="result-image-wrapper">
                   <img
-                    src={`${process.env.PUBLIC_URL}/static/images/training_pipeline.png`}
+                    src={`${process.env.PUBLIC_URL}/static/images/teaser.png`}
                     alt="Temporary PRIMA training overview"
                     className="result-image"
                   />
@@ -634,7 +634,7 @@ function App() {
                 </div>
                 <div className="result-image-wrapper">
                   <img
-                    src={`${process.env.PUBLIC_URL}/static/images/inference_pipeline.png`}
+                    src={`${process.env.PUBLIC_URL}/static/images/stage3.png`}
                     alt="Temporary PRIMA inference overview"
                     className="result-image"
                   />
