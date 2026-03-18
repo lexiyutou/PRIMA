@@ -32,7 +32,7 @@ const DEMO_GROUPS = [
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline_render.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline.obj`,
-    camera: { eye: { x: 1.65, y: 1.1, z: 0.8 } },
+    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
   },
 ];
 
@@ -561,7 +561,6 @@ function DemoGroup({ demo }) {
 
   return (
     <div className="demo-group">
-      <h3 className="title is-4 demo-group-title">{demo.title}</h3>
       {meshLoading && (
         <p className="pose-status pose-loading">Loading interactive mesh preview...</p>
       )}
@@ -570,7 +569,7 @@ function DemoGroup({ demo }) {
       )}
       <div className="pose-viewers-grid three-up">
         <ImageCard title="Input Image" imageSrc={demo.imageSrc} />
-        <ImageCard title="Overlap of Input and PRIMA Mesh" imageSrc={demo.lapSrc} />
+        <ImageCard title="Overlap image" imageSrc={demo.lapSrc} />
         {mesh ? (
           <MeshViewerCard title="3D Mesh" mesh={mesh} camera={demo.camera} />
         ) : (
@@ -599,9 +598,11 @@ function App() {
               <p className="pose-viewer-intro">
                 Each demo includes an input image, overlap rendering, and an interactive mesh viewer.
               </p>
-              {DEMO_GROUPS.map((demo) => (
-                <DemoGroup key={demo.id} demo={demo} />
-              ))}
+              <div className="demo-groups-grid">
+                {DEMO_GROUPS.map((demo) => (
+                  <DemoGroup key={demo.id} demo={demo} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
