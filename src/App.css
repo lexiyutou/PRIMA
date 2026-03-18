@@ -150,6 +150,23 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.pose-viewers-grid.three-up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.demo-group {
+  margin-top: 24px;
+}
+
+.demo-group + .demo-group {
+  margin-top: 30px;
+}
+
+.demo-group-title {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
 .pose-card {
   background-color: #ffffff;
   border: 1px solid var(--card-border);
@@ -287,6 +304,10 @@ body {
   }
 
   .pose-viewers-grid.two-up {
+    grid-template-columns: 1fr;
+  }
+
+  .pose-viewers-grid.three-up {
     grid-template-columns: 1fr;
   }
 }

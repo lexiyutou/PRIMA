@@ -17,27 +17,21 @@ const AUTHORS = [
   },
 ];
 
-const DEMO_IMAGE_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_input.png`;
-const DEMO_LAP_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline_render.png`;
-const DEMO_MESH_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline.obj`;
-
-const DEMO_MODULES = [
+const DEMO_GROUPS = [
   {
-    id: 'horse-image',
-    type: 'image',
-    title: 'Input Image',
-    imageSrc: DEMO_IMAGE_SRC,
+    id: 'sheep',
+    title: 'Demo 1 · Sheep',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline_render.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline.obj`,
+    camera: { eye: { x: 1.65, y: 1.1, z: 0.8 } },
   },
   {
-    id: 'horse-overlap',
-    type: 'image',
-    title: 'overlap of Input and PRIMA Mesh',
-    imageSrc: DEMO_LAP_SRC,
-  },
-  {
-    id: 'horse-mesh',
-    type: 'mesh',
-    title: '3D Mesh',
+    id: 'horse',
+    title: 'Demo 2 · Horse',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline_render.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline.obj`,
     camera: { eye: { x: 1.65, y: 1.1, z: 0.8 } },
   },
 ];
@@ -161,8 +155,8 @@ function Hero() {
                 </span>
               </div>
               <p className="publication-note">
-                The demo section is temporarily standardized to a single horse example while the full PRIMA
-                media set is being prepared.
+                The demo section currently presents multiple representative PRIMA examples, each including
+                input image, overlap visualization, and interactive 3D mesh.
               </p>
             </div>
           </div>
@@ -530,7 +524,7 @@ function ImageCard({ title, imageSrc }) {
   );
 }
 
-function App() {
+function DemoGroup({ demo }) {
   const [mesh, setMesh] = useState(null);
   const [meshLoading, setMeshLoading] = useState(true);
   const [meshError, setMeshError] = useState('');
@@ -543,7 +537,7 @@ function App() {
       setMeshError('');
 
       try {
-        const nextMesh = await loadMeshFromObj(DEMO_MESH_SRC);
+        const nextMesh = await loadMeshFromObj(demo.meshSrc);
         if (isMounted) {
           setMesh(nextMesh);
         }
@@ -563,8 +557,34 @@ function App() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [demo.meshSrc]);
 
+  return (
+    <div className="demo-group">
+      <h3 className="title is-4 demo-group-title">{demo.title}</h3>
+      {meshLoading && (
+        <p className="pose-status pose-loading">Loading interactive mesh preview...</p>
+      )}
+      {meshError && (
+        <p className="pose-status pose-error">Mesh preview could not be loaded: {meshError}</p>
+      )}
+      <div className="pose-viewers-grid three-up">
+        <ImageCard title="Input Image" imageSrc={demo.imageSrc} />
+        <ImageCard title="Overlap of Input and PRIMA Mesh" imageSrc={demo.lapSrc} />
+        {mesh ? (
+          <MeshViewerCard title="3D Mesh" mesh={mesh} camera={demo.camera} />
+        ) : (
+          <div className="pose-card">
+            <h3 className="title is-5 pose-card-title">3D Mesh</h3>
+            <p className="pose-status pose-loading">Loading mesh...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App() {
   return (
     <div className="app">
       <Navbar />
@@ -577,46 +597,11 @@ function App() {
             <div className="column is-full-width">
               <h2 className="title is-3">Demo</h2>
               <p className="pose-viewer-intro">
-                The current preview is intentionally simplified to one horse image and one corresponding PRIMA
-                mesh reconstruction.
+                Each demo includes an input image, overlap rendering, and an interactive mesh viewer.
               </p>
-              {meshLoading && (
-                <p className="pose-status pose-loading">Loading interactive mesh preview...</p>
-              )}
-              {meshError && (
-                <p className="pose-status pose-error">Mesh preview could not be loaded: {meshError}</p>
-              )}
-              <div className="pose-viewers-grid two-up">
-                {DEMO_MODULES.map((module) => {
-                  if (module.type === 'image') {
-                    return (
-                      <ImageCard
-                        key={module.id}
-                        title={module.title}
-                        imageSrc={module.imageSrc}
-                      />
-                    );
-                  }
-
-                  if (!mesh) {
-                    return (
-                      <div key={module.id} className="pose-card">
-                        <h3 className="title is-5 pose-card-title">{module.title}</h3>
-                        <p className="pose-status pose-loading">Loading mesh...</p>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <MeshViewerCard
-                      key={module.id}
-                      title={module.title}
-                      mesh={mesh}
-                      camera={module.camera}
-                    />
-                  );
-                })}
-              </div>
+              {DEMO_GROUPS.map((demo) => (
+                <DemoGroup key={demo.id} demo={demo} />
+              ))}
             </div>
           </div>
         </div>
