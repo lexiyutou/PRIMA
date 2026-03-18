@@ -93,15 +93,16 @@ body {
 
 .result-image-wrapper {
   display: flex;
-  align-items: flex-start;
-  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   width: 100%;
 }
 
 .result-image {
-  width: 460px !important;
-  min-width: 460px !important;
-  max-width: 460px !important;
+  width: 960px !important;
+  min-width: 960px !important;
+  max-width: 960px !important;
   height: auto !important;
   display: block !important;
   object-fit: contain !important;
@@ -128,9 +129,10 @@ body {
   color: #333;
   text-align: left;
   line-height: 1.45;
-  flex: 1;
-  padding-top: 20px;
-  max-width: 560px;
+  flex: none;
+  width: 100%;
+  max-width: 920px;
+  padding-top: 0;
 }
 
 .pose-viewer-intro {

@@ -18,6 +18,7 @@ const AUTHORS = [
 ];
 
 const DEMO_IMAGE_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_input.png`;
+const DEMO_LAP_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline_render.png`;
 const DEMO_MESH_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline.obj`;
 
 const DEMO_MODULES = [
@@ -26,6 +27,12 @@ const DEMO_MODULES = [
     type: 'image',
     title: 'Input Image',
     imageSrc: DEMO_IMAGE_SRC,
+  },
+  {
+    id: 'horse-overlap',
+    type: 'image',
+    title: 'overlap of Input and PRIMA Mesh',
+    imageSrc: DEMO_LAP_SRC,
   },
   {
     id: 'horse-mesh',
@@ -628,8 +635,15 @@ function App() {
                     className="result-image"
                   />
                   <p className="figure-caption">
-                    <strong>Temporary overview figure.</strong> Replace this panel with the PRIMA training
-                    pipeline once the finalized project figure is ready.
+                    <strong> Overview of PRIMA.</strong>  Due to the unbalanced distribution of 3D animal
+                          training data, vanilla networks often suffer from mean regression bias, yielding
+                          implausible meshes that collapse toward the average shape of majority species
+                          (e.g., a ”dog-like” zebra in Wrong prediction). We propose to inject biological taxonomies and keypoint-aware tokens as strong inductive biases into the
+                          latent space. This semantic anchoring effectively constrains the search space,
+                          shifting the model from a biased global prior to a precise conditional posterior
+                          (PRIMA prediction). Notably, even before test-time adaptation, PRIMA significantly outperforms baselines in alignment and joint accuracy (right). Our
+                          Test-Time Adaptation loop further refines these parameters for instance-specific
+                          precision.
                   </p>
                 </div>
                 <div className="result-image-wrapper">
@@ -639,8 +653,14 @@ function App() {
                     className="result-image"
                   />
                   <p className="figure-caption">
-                    <strong>Temporary inference figure.</strong> Replace this panel with the finalized PRIMA
-                    inference or adaptation diagram when it is available.
+                    <strong>Overview of the proposed three-stage training framework. </strong> The
+proposed methodology consists of an alternating three-stage training paradigm.
+Stage 1, warm-up training, leverages available 3D datasets and a 2D dataset to
+initialize the model parameters. Stage 2, per-instance refinement, then optimizes
+pose and shape parameters under 2D keypoint supervision to construct pseudo
+Ground Truth (pGT) SMAL parameters for the Quadruped2D dataset. Finally,
+Stage 3, loop-back retraining, performs a subsequent retraining phase that incorporates the refined instances together with the original 3D datasets, thereby
+further enhancing model performance.
                   </p>
                 </div>
               </div>
