@@ -17,8 +17,8 @@ const AUTHORS = [
   },
 ];
 
-const DEMO_IMAGE_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/animals/000000119761_horse/pose2D_on_image/0000_2d.png`;
-const DEMO_MESH_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/000000199236_horse_after_tta.obj`;
+const DEMO_IMAGE_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_input.png`;
+const DEMO_MESH_SRC = `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline.obj`;
 
 const DEMO_MODULES = [
   {
