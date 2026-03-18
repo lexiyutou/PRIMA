@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/PRIMA/static/css/main.8195b34e.css",
-    "main.js": "/PRIMA/static/js/main.98229978.js",
-    "index.html": "/PRIMA/index.html",
-    "main.8195b34e.css.map": "/PRIMA/static/css/main.8195b34e.css.map",
-    "main.98229978.js.map": "/PRIMA/static/js/main.98229978.js.map"
+    "main.css": "https://lexiyutou.github.io/PRIMA/static/css/main.8195b34e.css",
+    "main.js": "https://lexiyutou.github.io/PRIMA/static/js/main.1471b623.js",
+    "index.html": "https://lexiyutou.github.io/PRIMA/index.html",
+    "main.8195b34e.css.map": "https://lexiyutou.github.io/PRIMA/static/css/main.8195b34e.css.map",
+    "main.1471b623.js.map": "https://lexiyutou.github.io/PRIMA/static/js/main.1471b623.js.map"
   },
   "entrypoints": [
     "static/css/main.8195b34e.css",
-    "static/js/main.98229978.js"
+    "static/js/main.1471b623.js"
   ]
 }
