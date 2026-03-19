@@ -35,22 +35,6 @@ const DEMO_GROUPS = [
     camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
   },
   {
-    id: 'cow',
-    title: 'Demo 3 · Cow',
-    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_input.png`,
-    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_baseline_render.png`,
-    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_baseline.obj`,
-    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
-  },
-  {
-    id: 'zebra',
-    title: 'Demo 4 · Zebra',
-    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_input.png`,
-    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_baseline_render.png`,
-    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_baseline.obj`,
-    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
-  },
-  {
     id: 'horse1',
     title: 'Demo 5 · Horse (extra)',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_input.png`,
