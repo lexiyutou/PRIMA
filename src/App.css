@@ -100,9 +100,9 @@ body {
 }
 
 .result-image {
-  width: 960px !important;
-  min-width: 960px !important;
-  max-width: 960px !important;
+  width: 1000px !important;
+  min-width: 1000px !important;
+  max-width: 1000px !important;
   height: auto !important;
   display: block !important;
   object-fit: contain !important;
@@ -175,7 +175,7 @@ body {
 }
 
 .demo-group .pose-plot-wrapper {
-  height: 145px;
+  height: 160px;
 }
 
 .demo-group .pose-card {

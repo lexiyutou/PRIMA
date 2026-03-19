@@ -169,10 +169,6 @@ function Hero() {
                   </a>
                 </span>
               </div>
-              <p className="publication-note">
-                The demo section currently presents multiple representative PRIMA examples, each including
-                input image, overlap visualization, and interactive 3D mesh.
-              </p>
             </div>
           </div>
         </div>
@@ -190,29 +186,12 @@ function Abstract() {
             <h2 className="title is-3">Abstract</h2>
             <div className="abstract-text">
               <p>
-                We present <strong>PRIMA</strong> (Priors for Mesh Adaptation), a framework for robust 3D
-                quadruped mesh recovery under severe species and pose imbalance. Existing animal reconstruction
-                methods often regress toward mean shapes and poses due to limited 3D supervision and long-tailed
-                species distributions, resulting in poor generalization to underrepresented animals and rare
-                articulations.
-              </p>
-              <p>
-                PRIMA addresses this challenge through three key contributions. First, it incorporates
-                <strong> biological priors </strong>
-                through BioCLIP embeddings to inject semantic and morphological knowledge into the reconstruction
-                process, enabling more accurate and generalizable shape prediction across diverse quadrupeds.
-                Second, it introduces a <strong>test-time adaptation</strong> strategy that refines SMAL
-                predictions using 2D reprojection constraints together with auxiliary keypoint guidance,
-                improving pose and shape estimation while enabling the generation of high-quality pseudo-3D
-                annotations from existing 2D datasets. Third, leveraging this TTA framework, PRIMA constructs
-                <strong> Quadruped3D</strong>, a large-scale pseudo-3D dataset that covers diverse species and
-                pose variations to systematically improve model performance.
-              </p>
-              <p>
-                Extensive experiments on Animal3D, CtrlAni3D, Quadruped80K, and Animal Kingdom show strong
-                performance, especially on underrepresented species and challenging poses. The project highlights
-                the value of biological priors and adaptation-driven data expansion for scalable, generalizable
-                animal mesh recovery.
+                We present <strong>PRIMA</strong> (<strong>PRI</strong>ors for <strong>M</strong>esh <strong>A</strong>daptation), a framework for robust 3D quadruped mesh recovery under severe species and pose imbalance. Existing animal reconstruction methods often regress toward mean shapes and poses due to limited 3D supervision and long-tailed species distributions, resulting in poor generalization to underrepresented animals and rare articulations.
+          PRIMA addresses this challenge through three key contributions. 
+          First, we incorporate BioCLIP embeddings as <strong>biological priors</strong> to inject semantic and morphological knowledge into the reconstruction process, enabling more accurate and generalizable shape prediction across diverse quadrupeds. Second, we introduce a <strong>test-time adaptation (TTA)</strong> strategy that refines SMAL predictions using 2D reprojection constraints together with auxiliary keypoint guidance, improving pose and shape estimation while enabling the generation of high-quality pseudo-3D annotations from existing 2D datasets. 
+          Third, leveraging this TTA framework, we construct <strong>Quadruped3D</strong>, a large-scale pseudo-3D dataset that covers diverse species and pose variations to systematically improve model performance. 
+          Extensive experiments on Animal3D, CtrlAni3D, Quadruped80K, and Animal Kingdom demonstrate that PRIMA achieves state-of-the-art results, with particularly strong improvements on underrepresented species and challenging poses. 
+          Our results highlight the importance of biological priors and adaptation-driven data expansion for scalable and generalizable animal mesh recovery.
               </p>
             </div>
           </div>
@@ -323,32 +302,6 @@ const extractCameraFromRelayout = (eventData) => {
       y: eventData['scene.camera.up.y'],
       z: eventData['scene.camera.up.z'],
     },
-  };
-};
-
-const getCameraAzimuthDegrees = (camera) => {
-  const eye = camera?.eye || DEFAULT_MESH_CAMERA.eye;
-  const azimuth = Math.atan2(eye.y, eye.x) * (180 / Math.PI);
-  return (azimuth + 360) % 360;
-};
-
-const buildCameraFromAzimuth = (azimuthDegrees, referenceCamera, currentCamera = referenceCamera) => {
-  const baseEye = referenceCamera.eye || DEFAULT_MESH_CAMERA.eye;
-  const baseDistance = Math.hypot(baseEye.x, baseEye.y, baseEye.z) || 1;
-  const currentEye = currentCamera?.eye || baseEye;
-  const currentDistance = Math.hypot(currentEye.x, currentEye.y, currentEye.z) || baseDistance;
-  const scale = currentDistance / baseDistance;
-  const xyRadius = (Math.hypot(baseEye.x, baseEye.y) || 1) * scale;
-  const angle = azimuthDegrees * (Math.PI / 180);
-
-  return {
-    eye: {
-      x: xyRadius * Math.cos(angle),
-      y: xyRadius * Math.sin(angle),
-      z: baseEye.z * scale,
-    },
-    up: { x: 0, y: 0, z: 1 },
-    center: referenceCamera.center || DEFAULT_MESH_CAMERA.center,
   };
 };
 
@@ -464,18 +417,12 @@ function MeshViewerCard({ title, mesh, camera }) {
     () => lockCameraToZAxis(camera || DEFAULT_MESH_CAMERA),
     [camera]
   );
-  const initialAngle = useMemo(
-    () => getCameraAzimuthDegrees(referenceCamera),
-    [referenceCamera]
-  );
   const [lockedCamera, setLockedCamera] = useState(referenceCamera);
-  const [rotationAngle, setRotationAngle] = useState(initialAngle);
   const layout = useMemo(() => buildMeshLayout(lockedCamera), [lockedCamera]);
 
   useEffect(() => {
     setLockedCamera(referenceCamera);
-    setRotationAngle(initialAngle);
-  }, [initialAngle, referenceCamera]);
+  }, [referenceCamera]);
 
   const handleRelayout = (eventData) => {
     const nextCamera = extractCameraFromRelayout(eventData);
@@ -485,13 +432,6 @@ function MeshViewerCard({ title, mesh, camera }) {
 
     const nextLockedCamera = lockCameraToZAxis(nextCamera, referenceCamera);
     setLockedCamera(nextLockedCamera);
-    setRotationAngle(getCameraAzimuthDegrees(nextLockedCamera));
-  };
-
-  const handleAngleChange = (event) => {
-    const nextAngle = Number(event.target.value);
-    setRotationAngle(nextAngle);
-    setLockedCamera(buildCameraFromAzimuth(nextAngle, referenceCamera, lockedCamera));
   };
 
   return (
@@ -506,22 +446,6 @@ function MeshViewerCard({ title, mesh, camera }) {
           style={{ width: '100%', height: '100%' }}
           useResizeHandler
           onRelayout={handleRelayout}
-        />
-      </div>
-      <div className="mesh-angle-control">
-        <div className="mesh-angle-header">
-          <span>Rotation Around Z</span>
-          <span>{Math.round(rotationAngle)}deg</span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="360"
-          step="1"
-          value={rotationAngle}
-          onChange={handleAngleChange}
-          className="mesh-angle-slider"
-          aria-label="Rotate mesh around z axis"
         />
       </div>
     </div>
