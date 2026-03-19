@@ -35,18 +35,51 @@ const DEMO_GROUPS = [
     camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
   },
   {
-    id: 'cos',
+    id: 'cow',
     title: 'Demo 3 · Cow',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_baseline_render.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow/000000378628_cow_baseline.obj`,
     camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
-  },  {
+  },
+  {
     id: 'zebra',
     title: 'Demo 4 · Zebra',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_baseline_render.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/zebra/000000315905_zebra_baseline.obj`,
+    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
+  },
+  {
+    id: 'horse1',
+    title: 'Demo 5 · Horse (extra)',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_before_tta.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_before_tta.obj`,
+    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
+  },
+  {
+    id: 'cow1',
+    title: 'Demo 6 · Cow (extra)',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_before_tta.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_before_tta.obj`,
+    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
+  },
+  {
+    id: 'dogsnow',
+    title: 'Demo 8 · Dog in Snow',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_before_tta.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_before_tta.obj`,
+    camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
+  },
+  {
+    id: 'hippo',
+    title: 'Demo 9 · Hippo',
+    imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_input.png`,
+    lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_before_tta.png`,
+    meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_before_tta.obj`,
     camera: { eye: { x: -1.0, y: -1.0, z: -1 } },
   },
 ];
@@ -534,9 +567,6 @@ function App() {
           <div className="columns is-centered">
             <div className="column is-full-width">
               <h2 className="title is-3">Demo</h2>
-              <p className="pose-viewer-intro">
-                Each demo includes an input image, overlap rendering, and an interactive mesh viewer.
-              </p>
               <div className="demo-groups-grid">
                 {DEMO_GROUPS.map((demo) => (
                   <DemoGroup key={demo.id} demo={demo} />
