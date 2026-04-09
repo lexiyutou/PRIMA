@@ -207,7 +207,7 @@ function Abstract() {
           PRIMA addresses this challenge through three key contributions. 
           First, we incorporate BioCLIP embeddings as <strong>biological priors</strong> to inject semantic and morphological knowledge into the reconstruction process, enabling more accurate and generalizable shape prediction across diverse quadrupeds. Second, we introduce a <strong>test-time adaptation (TTA)</strong> strategy that refines SMAL predictions using 2D reprojection constraints together with auxiliary keypoint guidance, improving pose and shape estimation while enabling the generation of high-quality pseudo-3D annotations from existing 2D datasets. 
           Third, leveraging this TTA framework, we construct <strong>Quadruped3D</strong>, a large-scale pseudo-3D dataset that covers diverse species and pose variations to systematically improve model performance. 
-          Extensive experiments on Animal3D, CtrlAni3D, Quadruped80K, and Animal Kingdom demonstrate that PRIMA achieves state-of-the-art results, with particularly strong improvements on underrepresented species and challenging poses. 
+          Extensive experiments on Animal3D, CtrlAni3D, Quadruped2D, and Animal Kingdom demonstrate that PRIMA achieves state-of-the-art results, with particularly strong improvements on underrepresented species and challenging poses. 
           Our results highlight the importance of biological priors and adaptation-driven data expansion for scalable and generalizable animal mesh recovery.
               </p>
             </div>
