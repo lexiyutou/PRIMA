@@ -51,6 +51,12 @@ body {
   margin: 0 5px;
 }
 
+.hf-icon {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+}
+
 .navbar-links {
   flex-grow: 1;
   justify-content: center;

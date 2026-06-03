@@ -195,7 +195,12 @@ function Hero() {
                     rel="noopener noreferrer"
                   >
                     <span className="icon">
-                      <i className="fas fa-play"></i>
+                      <img
+                        className="hf-icon"
+                        src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"
+                        alt=""
+                        aria-hidden="true"
+                      />
                     </span>
                     <span>Hugging Face Demo</span>
                   </a>
