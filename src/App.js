@@ -162,27 +162,42 @@ function Hero() {
               </div>
               <div className="publication-links">
                 <span className="link-block">
-                  <a href="#demo" className="external-link button is-normal is-rounded is-dark">
+                  <a
+                    href="https://arxiv.org/abs/2606.02366"
+                    className="external-link button is-normal is-rounded is-dark"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="icon">
+                      <i className="fas fa-file-alt"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span className="link-block">
+                  <a
+                    href="https://github.com/AdaptiveMotorControlLab/PRIMA"
+                    className="external-link button is-normal is-rounded is-dark"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="icon">
+                      <i className="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <span className="link-block">
+                  <a
+                    href="https://huggingface.co/spaces/MLAdaptiveIntelligence/PRIMA-demo"
+                    className="external-link button is-normal is-rounded is-dark"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <span className="icon">
                       <i className="fas fa-play"></i>
                     </span>
-                    <span>Demo</span>
-                  </a>
-                </span>
-                <span className="link-block">
-                  <a href="#results" className="external-link button is-normal is-rounded is-dark">
-                    <span className="icon">
-                      <i className="fas fa-images"></i>
-                    </span>
-                    <span>Overview</span>
-                  </a>
-                </span>
-                <span className="link-block">
-                  <a href="#BibTeX" className="external-link button is-normal is-rounded is-dark">
-                    <span className="icon">
-                      <i className="fas fa-quote-right"></i>
-                    </span>
-                    <span>BibTeX</span>
+                    <span>Hugging Face Demo</span>
                   </a>
                 </span>
               </div>
