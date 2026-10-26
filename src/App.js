@@ -245,6 +245,38 @@ function Abstract() {
   );
 }
 
+function VideoResults() {
+  return (
+    <section className="section" id="video">
+      <div className="container">
+        <h2 className="title is-3">Results on Videos</h2>
+        <p className="video-subtitle">
+          PRIMA on DAVIS video sequences. Each pair shows the input frame and the PRIMA mesh overlay.
+        </p>
+        <figure className="video-card">
+          <div className="video-column-labels" aria-hidden="true">
+            <span>Input</span>
+            <span>PRIMA</span>
+            <span>Input</span>
+            <span>PRIMA</span>
+          </div>
+          <video
+            className="results-video"
+            src={`${process.env.PUBLIC_URL}/static/videos/davis_grid_2x2_4x3_1920.mp4`}
+            poster={`${process.env.PUBLIC_URL}/static/videos/davis_grid_2x2_4x3_1920_poster.jpg`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls
+            preload="metadata"
+          />
+        </figure>
+      </div>
+    </section>
+  );
+}
+
 const buildMeshTrace = (mesh) => ({
   type: 'mesh3d',
   x: mesh.vertices.map((vertex) => vertex[0]),
@@ -572,6 +604,7 @@ function App() {
       <Navbar />
       <Hero />
       <Abstract />
+      <VideoResults />
 
       <section className="section" id="demo">
         <div className="container is-max-desktop">

@@ -2,3 +2,4 @@
 /node_modules/
 /build/
 *.mp4
+!public/static/videos/*.mp4
