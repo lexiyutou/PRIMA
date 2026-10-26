@@ -612,13 +612,8 @@ function App() {
             <div className="column is-full-width">
               <h2 className="title is-3">Mesh Recovery on Single Images</h2>
               <p className="demo-intro">
-                Single-image mesh recovery on in-the-wild photos of six quadrupeds, covering riders
-                occluding the body, fast galloping and running poses, low light, and animals blending
-                into the background. Each example shows
-                the <strong>input image</strong>, the predicted SMAL mesh rendered as a{' '}
-                <strong>mesh overlay</strong> on the image, and the reconstructed{' '}
-                <strong>3D mesh</strong>. Drag the 3D view to rotate it and scroll to zoom. All results
-                are direct predictions from PRIMA, without instance-level refinement.
+                Input image, mesh overlay, and reconstructed 3D mesh for in-the-wild quadrupeds.
+                Drag the 3D view to rotate and scroll to zoom.
               </p>
               <div className="demo-groups-grid">
                 {DEMO_GROUPS.map((demo) => (
