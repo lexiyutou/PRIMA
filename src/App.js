@@ -249,7 +249,7 @@ function VideoResults() {
   return (
     <section className="section" id="video">
       <div className="container">
-        <h2 className="title is-3">Results on Videos</h2>
+        <h2 className="title is-3">Mesh Recovery on Videos</h2>
         <p className="video-subtitle">
           PRIMA on DAVIS video sequences. Each pair shows the input frame and the PRIMA mesh overlay.
         </p>
@@ -610,7 +610,7 @@ function App() {
         <div className="container is-max-desktop">
           <div className="columns is-centered">
             <div className="column is-full-width">
-              <h2 className="title is-3">Single-Image 3D Mesh Recovery</h2>
+              <h2 className="title is-3">Mesh Recovery on Single Images</h2>
               <p className="demo-intro">
                 Single-image mesh recovery on in-the-wild photos of six quadrupeds, covering riders
                 occluding the body, fast galloping and running poses, low light, and animals blending
