@@ -576,7 +576,6 @@ function DemoGroup({ demo }) {
 
   return (
     <div className="demo-group">
-      <h3 className="title is-6 demo-group-title">{demo.title}</h3>
       {meshLoading && (
         <p className="pose-status pose-loading">Loading interactive mesh preview...</p>
       )}
@@ -611,7 +610,7 @@ function App() {
         <div className="container is-max-desktop">
           <div className="columns is-centered">
             <div className="column is-full-width">
-              <h2 className="title is-3">Interactive 3D Demo</h2>
+              <h2 className="title is-3">Single-Image 3D Mesh Recovery</h2>
               <p className="demo-intro">
                 Single-image mesh recovery on in-the-wild photos of six quadrupeds, covering riders
                 occluding the body, fast galloping and running poses, low light, and animals blending
