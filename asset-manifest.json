@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/PRIMA/static/css/main.c12526ea.css",
-    "main.js": "/PRIMA/static/js/main.213cb92c.js",
+    "main.js": "/PRIMA/static/js/main.7b2fc573.js",
     "index.html": "/PRIMA/index.html",
     "main.c12526ea.css.map": "/PRIMA/static/css/main.c12526ea.css.map",
-    "main.213cb92c.js.map": "/PRIMA/static/js/main.213cb92c.js.map"
+    "main.7b2fc573.js.map": "/PRIMA/static/js/main.7b2fc573.js.map"
   },
   "entrypoints": [
     "static/css/main.c12526ea.css",
-    "static/js/main.213cb92c.js"
+    "static/js/main.7b2fc573.js"
   ]
 }
