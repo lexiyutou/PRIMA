@@ -160,6 +160,9 @@ function Hero() {
                   <sup>1</sup>EPFL
                 </span>
               </div>
+              <div className="is-size-5 publication-authors">
+                <span className="author-block">Accepted at WACV 2027</span>
+              </div>
               <div className="publication-links">
                 <span className="link-block">
                   <a
