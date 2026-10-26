@@ -145,7 +145,7 @@ function Hero() {
           <div className="columns is-centered">
             <div className="column has-text-centered">
               <h1 className="title is-1 publication-title">
-                PRIMA: Boosting Animal Mesh Recovery with Biological Priors and Test-Time Adaptation
+                PRIMA: Boosting Animal Mesh Recovery with Taxonomic Priors and Adaptation-Driven Data Bootstrapping
               </h1>
               <div className="is-size-5 publication-authors">
                 {AUTHORS.map((author) => (
@@ -226,12 +226,16 @@ function Abstract() {
             <h2 className="title is-3">Abstract</h2>
             <div className="abstract-text">
               <p>
-                We present <strong>PRIMA</strong> (<strong>PRI</strong>ors for <strong>M</strong>esh <strong>A</strong>daptation), a framework for robust 3D quadruped mesh recovery under severe species and pose imbalance. Existing animal reconstruction methods often regress toward mean shapes and poses due to limited 3D supervision and long-tailed species distributions, resulting in poor generalization to underrepresented animals and rare articulations.
-          PRIMA addresses this challenge through three key contributions. 
-          First, we incorporate BioCLIP embeddings as <strong>biological priors</strong> to inject semantic and morphological knowledge into the reconstruction process, enabling more accurate and generalizable shape prediction across diverse quadrupeds. Second, we introduce a <strong>test-time adaptation (TTA)</strong> strategy that refines SMAL predictions using 2D reprojection constraints together with auxiliary keypoint guidance, improving pose and shape estimation while enabling the generation of high-quality pseudo-3D annotations from existing 2D datasets. 
-          Third, leveraging this TTA framework, we construct <strong>Quadruped3D</strong>, a large-scale pseudo-3D dataset that covers diverse species and pose variations to systematically improve model performance. 
-          Extensive experiments on Animal3D, CtrlAni3D, Quadruped2D, and Animal Kingdom demonstrate that PRIMA achieves state-of-the-art results, with particularly strong improvements on underrepresented species and challenging poses. 
-          Our results highlight the importance of biological priors and adaptation-driven data expansion for scalable and generalizable animal mesh recovery.
+                Recovering articulated 3D animal meshes from monocular images is challenging due to the long-tailed distribution of species and limited large-scale 3D supervision. Existing methods rely on small annotated datasets and thus regress to average shapes and poses, leading to poor generalization to rare species and articulations.
+          We present <strong>PRIMA</strong> (<strong>PRI</strong>ors for <strong>M</strong>esh <strong>A</strong>daptation), a framework that tackles these limitations with two components: taxonomic shape priors and adaptation-driven data bootstrapping.
+          First, we derive <strong>taxonomic shape priors</strong> from BioCLIP image features, which are learned under taxonomic supervision, to inject species-level knowledge into mesh reconstruction, improving shape estimation across diverse quadrupeds.
+          Second, we propose an <strong>adaptation-driven bootstrapping</strong> scheme that turns abundant 2D animal annotations into reliable pseudo-3D supervision via lightweight instance-level mesh refinement and quality-aware filtering.
+          This yields <strong>Quadruped3D</strong>, a large-scale pseudo-3D dataset constructed from real-world animal images, containing approximately 9K pseudo-3D annotations.
+          Together, these components alleviate the long-tail problem: extensive experiments on Animal3D, CtrlAni3D, Quadruped2D, and Animal Kingdom demonstrate state-of-the-art performance for mesh reconstruction, with particularly strong gains on challenging poses and underrepresented species.
+          The code is available at{' '}
+          <a href="https://github.com/AdaptiveMotorControlLab/PRIMA" target="_blank" rel="noopener noreferrer">
+            https://github.com/AdaptiveMotorControlLab/PRIMA
+          </a>.
               </p>
             </div>
           </div>
@@ -634,10 +638,11 @@ further enhancing model performance.
       <section className="section" id="BibTeX">
         <div className="container is-max-desktop content">
           <h2 className="title">BibTeX</h2>
-          <pre><code>{`@misc{yu_prima,
-  title={PRIMA: Boosting Animal Mesh Recovery with Biological Priors and Test-Time Adaptation},
-  author={Xiaohang Yu and Ti Wang and Mackenzie Weygandt Mathis},
-  note={EPFL project page. Update publication year, venue, and links when available.}
+          <pre><code>{`@article{yu2026prima,
+  title={PRIMA: Boosting Animal Mesh Recovery with Taxonomic Priors and Adaptation-Driven Data Bootstrapping},
+  author={Yu, Xiaohang and Wang, Ti and Mathis, Mackenzie Weygandt},
+  journal={arXiv preprint arXiv:2606.02366},
+  year={2026}
 }`}</code></pre>
         </div>
       </section>
