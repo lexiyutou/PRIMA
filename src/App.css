@@ -185,6 +185,14 @@ body {
   background-color: #000000;
 }
 
+.demo-intro {
+  margin: -0.5rem auto 0.5rem;
+  max-width: 860px;
+  color: var(--muted-text);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
 .pose-viewer-intro {
   margin: 8px 0 0;
   text-align: left;

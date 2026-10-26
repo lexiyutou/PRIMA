@@ -20,7 +20,7 @@ const AUTHORS = [
 const DEMO_GROUPS = [
   {
     id: 'sheep',
-    title: 'Demo 1 · Sheep',
+    title: 'Sheep',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline_render.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/sheep/000000102614_sheep_baseline.obj`,
@@ -28,7 +28,7 @@ const DEMO_GROUPS = [
   },
   {
     id: 'horse',
-    title: 'Demo 2 · Horse',
+    title: 'Dressage horse with rider',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline_render.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/ride_horse/000000209383_horse_baseline.obj`,
@@ -36,7 +36,7 @@ const DEMO_GROUPS = [
   },
   {
     id: 'horse1',
-    title: 'Demo 5 · Horse (extra)',
+    title: 'Galloping racehorse',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_before_tta.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/horse1/000000154710_horse_before_tta.obj`,
@@ -44,7 +44,7 @@ const DEMO_GROUPS = [
   },
   {
     id: 'cow1',
-    title: 'Demo 6 · Cow (extra)',
+    title: 'Cow at night',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_before_tta.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/cow1/000000005005_cow_before_tta.obj`,
@@ -52,7 +52,7 @@ const DEMO_GROUPS = [
   },
   {
     id: 'dogsnow',
-    title: 'Demo 8 · Dog in Snow',
+    title: 'Husky running in snow',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_before_tta.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/doginsnow/n02109961_11888_before_tta.obj`,
@@ -60,7 +60,7 @@ const DEMO_GROUPS = [
   },
   {
     id: 'hippo',
-    title: 'Demo 9 · Hippo',
+    title: 'Warthog in dry grass',
     imageSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_input.png`,
     lapSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_before_tta.png`,
     meshSrc: `${process.env.PUBLIC_URL}/static/3d_predictions/hippo/n02397096_3109_before_tta.obj`,
@@ -576,6 +576,7 @@ function DemoGroup({ demo }) {
 
   return (
     <div className="demo-group">
+      <h3 className="title is-6 demo-group-title">{demo.title}</h3>
       {meshLoading && (
         <p className="pose-status pose-loading">Loading interactive mesh preview...</p>
       )}
@@ -584,7 +585,7 @@ function DemoGroup({ demo }) {
       )}
       <div className="pose-viewers-grid three-up">
         <ImageCard title="Input Image" imageSrc={demo.imageSrc} />
-        <ImageCard title="Overlap image" imageSrc={demo.lapSrc} />
+        <ImageCard title="Mesh Overlay" imageSrc={demo.lapSrc} />
         {mesh ? (
           <MeshViewerCard title="3D Mesh" mesh={mesh} camera={demo.camera} />
         ) : (
@@ -610,7 +611,16 @@ function App() {
         <div className="container is-max-desktop">
           <div className="columns is-centered">
             <div className="column is-full-width">
-              <h2 className="title is-3">Demo</h2>
+              <h2 className="title is-3">Interactive 3D Demo</h2>
+              <p className="demo-intro">
+                Single-image mesh recovery on in-the-wild photos of six quadrupeds, covering riders
+                occluding the body, fast galloping and running poses, low light, and animals blending
+                into the background. Each example shows
+                the <strong>input image</strong>, the predicted SMAL mesh rendered as a{' '}
+                <strong>mesh overlay</strong> on the image, and the reconstructed{' '}
+                <strong>3D mesh</strong>. Drag the 3D view to rotate it and scroll to zoom. All results
+                are direct predictions from PRIMA, without instance-level refinement.
+              </p>
               <div className="demo-groups-grid">
                 {DEMO_GROUPS.map((demo) => (
                   <DemoGroup key={demo.id} demo={demo} />
